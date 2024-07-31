@@ -79,17 +79,24 @@ class DeserializeMessageConnector : StageConnector<IIncomingPhysicalMessageConte
             messageTypes = enclosedMessageTypesStringToMessageTypes.GetOrAdd(enclosedMessageTypesValue,
                 static (key, registry) =>
                 {
-                    string[] messageTypeStrings = key.Split(EnclosedMessageTypeSeparator);
-                    var types = new List<Type>(messageTypeStrings.Length);
-                    for (var index = 0; index < messageTypeStrings.Length; index++)
+                    ReadOnlySpan<char> readOnlySpan = key.AsSpan();
+                    var numberOfSemicolons = readOnlySpan.Count(';');
+                    if (numberOfSemicolons == 0)
                     {
-                        string messageTypeString = messageTypeStrings[index];
-                        if (DoesTypeHaveImplAddedByVersion3(messageTypeString))
+                        numberOfSemicolons = 1;
+                    }
+                    Span<Range> ranges = numberOfSemicolons < 128 ? stackalloc Range[numberOfSemicolons] : new Range[numberOfSemicolons];
+                    var numberOfSplitElements = readOnlySpan.Split(ranges, ';');
+                    var types = new List<Type>(numberOfSplitElements);
+                    foreach (var range in ranges[..numberOfSplitElements])
+                    {
+                        var potentialType = readOnlySpan[range];
+                        if (DoesTypeHaveImplAddedByVersion3(potentialType))
                         {
                             continue;
                         }
 
-                        var metadata = registry.GetMessageMetadata(messageTypeString);
+                        var metadata = registry.GetMessageMetadata(potentialType.ToString());
 
                         if (metadata == null)
                         {
@@ -133,7 +140,7 @@ class DeserializeMessageConnector : StageConnector<IIncomingPhysicalMessageConte
         return logicalMessages;
     }
 
-    static bool DoesTypeHaveImplAddedByVersion3(string existingTypeString) => existingTypeString.AsSpan().IndexOf("__impl".AsSpan()) != -1;
+    static bool DoesTypeHaveImplAddedByVersion3(ReadOnlySpan<char> existingTypeString) => existingTypeString.IndexOf("__impl".AsSpan()) != -1;
 
     readonly MessageDeserializerResolver deserializerResolver;
     readonly LogicalMessageFactory logicalMessageFactory;
@@ -143,11 +150,6 @@ class DeserializeMessageConnector : StageConnector<IIncomingPhysicalMessageConte
 
     readonly ConcurrentDictionary<string, Type[]> enclosedMessageTypesStringToMessageTypes =
         new ConcurrentDictionary<string, Type[]>();
-
-    static readonly char[] EnclosedMessageTypeSeparator =
-    {
-        ';'
-    };
 
     static readonly ILog log = LogManager.GetLogger<DeserializeMessageConnector>();
 }
