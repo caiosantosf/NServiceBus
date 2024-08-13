@@ -13,7 +13,7 @@ public class When_building_components
         InitializeServices(serviceCollection);
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
-        Assert.AreEqual(serviceProvider.GetService(typeof(SingletonComponent)), serviceProvider.GetService(typeof(SingletonComponent)));
+        Assert.That(serviceProvider.GetService(typeof(SingletonComponent)), Is.EqualTo(serviceProvider.GetService(typeof(SingletonComponent))));
     }
 
     [Test]
@@ -23,7 +23,7 @@ public class When_building_components
         InitializeServices(serviceCollection);
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
-        Assert.AreNotEqual(serviceProvider.GetService<TransientComponent>(), serviceProvider.GetService<TransientComponent>());
+        Assert.That(serviceProvider.GetService<TransientComponent>(), Is.Not.EqualTo(serviceProvider.GetService<TransientComponent>()));
     }
 
     [Test]
@@ -36,7 +36,7 @@ public class When_building_components
         var instance1 = serviceProvider.GetService(typeof(ScopedComponent));
         var instance2 = serviceProvider.GetService(typeof(ScopedComponent));
 
-        Assert.AreSame(instance1, instance2);
+        Assert.That(instance2, Is.SameAs(instance1));
     }
 
     [Test]
@@ -49,7 +49,7 @@ public class When_building_components
         var instance1 = serviceProvider.GetService(typeof(ScopedLambdaComponent));
         var instance2 = serviceProvider.GetService(typeof(ScopedLambdaComponent));
 
-        Assert.AreSame(instance1, instance2);
+        Assert.That(instance2, Is.SameAs(instance1));
     }
 
     [Test]
@@ -59,7 +59,7 @@ public class When_building_components
         InitializeServices(serviceCollection);
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
-        Assert.AreNotEqual(serviceProvider.GetService(typeof(TransientLambdaComponent)), serviceProvider.GetService(typeof(TransientLambdaComponent)));
+        Assert.That(serviceProvider.GetService(typeof(TransientLambdaComponent)), Is.Not.EqualTo(serviceProvider.GetService(typeof(TransientLambdaComponent))));
     }
 
     [Test]
@@ -69,7 +69,7 @@ public class When_building_components
         InitializeServices(serviceCollection);
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
-        Assert.AreEqual(serviceProvider.GetService(typeof(SingletonLambdaComponent)), serviceProvider.GetService(typeof(SingletonLambdaComponent)));
+        Assert.That(serviceProvider.GetService(typeof(SingletonLambdaComponent)), Is.EqualTo(serviceProvider.GetService(typeof(SingletonLambdaComponent))));
     }
 
     [Test]

@@ -39,7 +39,7 @@ public class RoutingToDispatchConnectorTests
             return Task.CompletedTask;
         });
 
-        Assert.That(operations, Has.Length.EqualTo(1));
+        Assert.That(operations, expression: Has.Length.EqualTo(1));
 
         TransportOperation destination1Operation = operations.ElementAt(0);
         Assert.That(destination1Operation.Message.MessageId, Is.EqualTo("ID"));
