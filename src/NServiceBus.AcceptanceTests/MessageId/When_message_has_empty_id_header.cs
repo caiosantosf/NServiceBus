@@ -20,7 +20,7 @@ public class When_message_has_empty_id_header : NServiceBusAcceptanceTest
             .Run();
 
         Assert.IsFalse(string.IsNullOrWhiteSpace(context.MessageId));
-        Assert.AreEqual(context.MessageId, context.Headers[Headers.MessageId], "Should populate the NServiceBus.MessageId header with the new value");
+        Assert.That(context.Headers[Headers.MessageId], Is.EqualTo(context.MessageId), "Should populate the NServiceBus.MessageId header with the new value");
     }
 
     class CorruptionBehavior : IBehavior<IDispatchContext, IDispatchContext>

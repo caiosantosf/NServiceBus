@@ -35,8 +35,8 @@ public class When_registering_deserializers_with_settings : NServiceBusAcceptanc
         Assert.True(context.HandlerGotTheRequest);
         Assert.True(context.SerializeCalled);
         Assert.True(context.DeserializeCalled);
-        Assert.AreEqual(Value1, context.ValueFromSettingsForMainSerializer);
-        Assert.AreEqual(Value2, context.ValueFromSettingsForDeserializer);
+        Assert.That(context.ValueFromSettingsForMainSerializer, Is.EqualTo(Value1));
+        Assert.That(context.ValueFromSettingsForDeserializer, Is.EqualTo(Value2));
     }
 
     public class Context : ScenarioContext

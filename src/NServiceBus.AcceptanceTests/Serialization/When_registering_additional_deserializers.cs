@@ -33,7 +33,7 @@ public class When_registering_additional_deserializers : NServiceBusAcceptanceTe
         Assert.True(context.HandlerGotTheRequest);
         Assert.True(context.SerializeCalled);
         Assert.True(context.DeserializeCalled);
-        Assert.AreEqual("SomeFancySettings", context.ValueFromSettings);
+        Assert.That(context.ValueFromSettings, Is.EqualTo("SomeFancySettings"));
     }
 
     public class Context : ScenarioContext

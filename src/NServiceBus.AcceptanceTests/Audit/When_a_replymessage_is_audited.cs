@@ -23,7 +23,7 @@ public class When_a_replymessage_is_audited : NServiceBusAcceptanceTest
 
         Assert.True(context.MessageProcessed);
         Assert.True(context.MessageAudited);
-        Assert.AreEqual("SomeValue", context.HeaderValue);
+        Assert.That(context.HeaderValue, Is.EqualTo("SomeValue"));
     }
 
     public static byte Checksum(byte[] data)
